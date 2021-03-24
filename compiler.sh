@@ -15,18 +15,15 @@ function log {
 function info {
     log "===[INFO]===[`date +'%F-%T'`]=== : $1"
 }
-
 # generates warn log
 function warn {
     log "===[WARN]===[`date +'%F-%T'`]=== : $1"
 }
-
 # generates FATAL log and exits with -1
 function fatal {
-    log "===[WARN]===[`date +'%F-%T'`]=== : $1"
+    log "===[FATAL]==[`date +'%F-%T'`]=== : $1"
     exit -1
 }
-
 # check weather or not exitcode was 0 and return
 function check {
     if [ $1 -eq 0 ];then
@@ -47,7 +44,12 @@ info "made an isolated area"
 
 # change directory to codebase
 tar -xvzf $CODE_PATH
-cd `ls -d */ | head -n1`
+codebase_dir=`ls -d */ | head -n1`
+if [ -z  "$codebase_dir" ];then
+    codebase_dir="./"
+fi
+cd $codebase_dir
+echo "return code is :$?"
 info "entered the code base"
 
 #compile
@@ -83,8 +85,9 @@ case $LANG in
   jar|JAR)
     info "language detected: jar"
     info "start compiling using jar-stub"
-    cat jar-stub.sh `ls | head -n1` > $BIN_PATH 2> $LOG_PATH  
-    check
+    
+    cat ../jar-stub.sh `ls | head -n1` > $BIN_PATH 2> $LOG_PATH  
+    check $?
     
     ;;
 
