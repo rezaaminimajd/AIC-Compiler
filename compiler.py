@@ -9,10 +9,14 @@ class Compiler:
 
         """ read file from minio """
         zip_file = MinioClient.get_file(code_id, BucketName.Code.value)
+        with open('code.zip', 'wb') as f:
+            f.write(zip_file)
 
         ''' compile '''  # todo Arshia
-        file = None
+        f = open('compiled.zip', 'r')
+        file = f.read()
+        f.close()
 
         ''' write in minio '''
-        MinioClient.upload(code_id, file, BucketName.Code.value)  # or new Bucket name
+        MinioClient.upload(code_id, file, BucketName.Code.value)
         return True
